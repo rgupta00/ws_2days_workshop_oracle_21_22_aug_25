@@ -1,0 +1,2 @@
+INDEX VERSION 1.4+C:\ws_2days_workshop_oracle_21_22_aug_25\code\jaxrs_example\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+337255933.index

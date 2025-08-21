@@ -1,0 +1,10 @@
+package com.demo;
+@Path("/messages")
+public class MessageResources {
+
+@GET
+@Produces(MediaType.TEXT_PLAIN)
+public String getMessage(){
+	return "hello";
+}
+}

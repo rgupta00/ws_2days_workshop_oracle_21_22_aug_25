@@ -1,0 +1,541 @@
+	------------------------------------------------
+		REST=REpresentational State Transfer 
+	------------------------------------------------
+	Contents:
+		# Introduction to RESTful WS and JAX-RS
+		# http status code
+		# Hello World web service
+		# Annotations
+		# pagination filtering
+		# CRUD operation json /xml response
+		# testing rest api with postman
+		# Converting data b/w xml and Java with JAXB
+		# exception handling, Using WebApplicationException
+		
+
+
+
+	------------------------------------------
+	Introduction to RESTful WS and JAX-RS
+	-------------------------------------------
+
+	What is REST?
+		# Architectural style which is based on web-standards and the HTTP 
+		protocol
+
+		# REST first described by Roy Fielding in 2000
+		# In a REST based architecture everything is a resource can be accessed by 		
+		http protocol
+
+		# Every resource should support the HTTP common operations
+		# REST allows that resources have different representations, e.g. text, 		
+		xml, json etc
+
+
+
+	Three Fundamental Aspects of the REST Design Pattern
+		1. Resources
+		2. URLs
+		3. Simple Operations
+
+	HTTP method (operations) supported 
+		The PUT, GET, POST and DELETE methods are typical used
+		 in REST based architectures. 
+	
+		GET	==> Reading access of the resource without side-effects 
+			==> The resource is never changed via a GET request
+
+
+		PUT 	==> creates a new resource, must also be idempotent 
+
+		DELETE 	==> removes the resources. 
+
+		POST 	==> updates an existing resource 
+
+
+
+
+	SOAP vs RESTful WS
+
+			REST					SOAP
+		______________________________________________________________________________________
+
+		Expose RESOURCES which				Expose OPERATIOSN which
+		represent DATA					represent LOGIC
+
+
+		use http (get/put/post/delete)			use post from http
+
+		Simple P to P communication			support P to P, Pub sub 									model over http
+
+
+		Support multiple data formates			support only XML and 										attachments
+
+		stateless communication 			stateless/ stateful/ 										asynch communication
+
+
+	Why REST ?
+
+		==> REST can be consumed by any client even a web browser with ajax and JS
+		==> REST is lightweight
+		=> Don't require XML parsing
+		=> Don't require an SOAP header for every messages
+
+	Where REST fits?
+
+	Good for :
+		# Web services
+		# Limited bandwidth(smaller message size)
+		# Limited resources( no xml parsing required)
+		# Exploring data over internet
+		# combining content from various source in an web browser
+
+
+	Restful Web Services Frameworks and APIs  : JAX-RS
+
+			=> The Java API for RESTful Web Services  JAX-RS
+
+			=> Uses annotations to make POJOs and resources available through HTTP 
+
+			==> Jersey is a production quality reference implementation of 	JAX-RS API from Sun
+
+			=> Other Vendors: CXF (Apache), RESTEasy(JBoss) and Restlet
+
+
+
+	
+
+----------------------------------------------------------------------------------
+	http status code:
+---------------------------------------------------------------------------------
+
+1XX : informational , ack
+2XX: Success
+	200 OK
+	201 CREATED
+	204 NO CONTENT
+
+3XX: Redirection, ask client to send req somewhere else
+	302: Found
+	304:Not modified
+	307: Temporary redirect
+
+4XX: Client Error, Client make error in request
+	400: bad request
+	401: unauthorized
+	403: forbidden, not right access
+	404: not found
+	415: unsupported media type
+
+5xx: server error, request is valid but server face problme
+	500: internal server error
+	
+
+
+
+
+
+--------------------------------------------------------------------------
+	Hello World JAX-RS
+---------------------------------------------------------------------------
+Archetype org.glassfish.jersey.archetypes:jersey-quickstart-webapp:2.14
+
+	Hello World JAX-RS
+	Steps:
+		1. Create web project , add jar dependencies
+		2. configure in web.xml
+		3. Create POJOs and add annotation 
+		4. Deploy and test
+
+
+
+
+
+	conf in web.xml
+	-----------------
+	<servlet>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>com.demo</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+
+	hello world Resources
+	----------------------
+
+	Configuration:
+	-----------------
+	@ApplicationPath("/api")
+	public class MyApplication extends Application {
+		// No need to override anything
+	}
+	
+
+	@Path("/hello")
+	public class HelloResource {
+
+		@GET
+		@Produces(MediaType.TEXT_PLAIN)
+		public String hello() {
+			return "Hello from built-in JAX-RS on WebLogic!";
+		}
+	}
+
+
+
+	testing
+	----------
+	api/messages
+
+
+	Some more examples:
+	------------------
+	Example
+	---------
+
+		@Path("/hello")  
+		public class HelloWorldService {  
+   	
+ 		@GET  
+ 		@Path("/{param}")  
+ 		public Response getMessage(@PathParam("param") String message) {  
+  				String output = "Jersey say Hello World!!! : " + message;  
+  				return Response.status(200).entity(output).build();  
+ 			}  
+		}  
+
+	Example:
+
+
+		@Path("/CustomerRest")
+		public class CustomerRest {
+
+		@GET
+		@Produces(MediaType.TEXT_PLAIN)
+
+		public String getCustomerInfo(@QueryParam("customerId")String customerId,@QueryParam("customerName")
+		String customerName)
+		{
+
+			return customerId+" " +customerName+" processed!";
+		}
+		}
+
+		Invoking  /api/CustomerRest?customerId=121&customerName=raj
+
+
+
+--------------------------------------
+	Creating CRUD operations
+--------------------------------------
+	
+public class Product  {
+	private Integer id;
+	private String name;
+	private double price;
+}
+
+
+
+public interface ProductDao {
+	public List<Product> getAll();
+	public Product getProductById(int productId);
+	public Product addProduct(Product book);
+	public Product updateProduct(int productId, Product product);
+	public Product deleteProduct(int productId);
+	
+}
+
+
+public class ProductDaoImplUsingMap implements ProductDao{
+	private static Map<Integer, Product> products=new HashMap<Integer, Product>();
+	private static int counter;
+	static {
+		products.put(1, new Product(1, "Laptop", 500000));
+		products.put(2, new Product(2, "Laptop cover", 400));
+		counter=2;
+	}
+	
+	@Override
+	public List<Product> getAll() {	
+		return new ArrayList<Product>(products.values());
+	}
+
+	@Override
+	public Product getProductById(int productId) {
+		Product product= products.get(productId);
+		if(product==null)
+			throw new ProductNotFoundException("product with id "+ productId +" is not found");
+		
+		return product;
+	}
+
+	@Override
+	public Product addProduct(Product product) {
+		product.setId(++counter);
+		products.put(product.getId(), product);
+		return product;
+	}
+
+	@Override
+	public Product updateProduct(int productId, Product product) {
+		Product productToUpdate= getProductById(productId);
+		productToUpdate.setPrice(product.getPrice());
+		products.put(productId, productToUpdate);
+		
+		return productToUpdate;
+	}
+
+	@Override
+	public Product deleteProduct(int productId) {
+		Product productToDelete=getProductById(productId);
+		products.remove(productId);
+		return productToDelete;
+	}
+
+}
+
+
+
+public class ProductNotFoundException extends RuntimeException {
+	public ProductNotFoundException(String message) {
+		super(message);
+	}
+}
+
+
+Now introduce new Resource method
+---------------------------------
+@Produces({"application/xml", "application/json"})
+@Produces(value={MediaType.APPLICATION_JSON,})
+------------------------------------------------------
+
+
+Now introduce new Resource method
+---------------------------------
+@Produces({"application/xml", "application/json"})
+@Produces(value={MediaType.APPLICATION_JSON,})
+------------------------------------------------------
+
+@Path("/products")
+public class ProductResource {
+
+    private ProductDao dao = new ProductDaoImplUsingMap(); // service layer interface/impl
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Product> getAllProducts() {
+        return dao.getAll();
+    }
+
+    @GET
+    @Path("/{productId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Product getProductById(@PathParam("productId") int productId) {
+        return dao.getProductById(productId);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Product addProduct(Product product) {
+        return dao.addProduct(product);
+    }
+
+    @PUT
+    @Path("/{productId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Product updateProduct(@PathParam("productId") int productId, Product product) {
+        product.setId(productId);
+        dao.updateProduct(productId, product);
+        return product;
+    }
+
+    @DELETE
+    @Path("/{productId}")
+    public void deleteProduct(@PathParam("productId") int productId) {
+        dao.deleteProduct(productId);
+    }
+}
+
+
+
+
+
+
+-----------------------------------------------------------------
+	Converting data b/w xml and Java with JAXB
+------------------------------------------------------------------
+
+	@Produces({"application/xml", "application/json"})
+
+	for xml restful ws service: use jaxb annotations
+	--------------------------
+
+
+@XmlRootElement(name="book")
+@XmlType(propOrder={"id","isbn","title","author","price"})
+
+
+	
+=====================================
+Exception handling with rest api
+=====================================
+
+create an business exception"
+-----------------------------
+
+public class BookNotFoundException extends Exception{
+
+	private static final long serialVersionUID = 1L;
+	
+	public BookNotFoundException(String msg){
+		super(msg);
+	}
+	
+	public BookNotFoundException(String msg, Throwable throwable){
+		super(msg, throwable);
+	}
+	
+
+}
+
+changes service layer;
+--------------------
+public Book getBookById(int bookId)throws BookNotFoundException;
+
+
+@Override
+public Book getBookById(int bookId)throws BookNotFoundException {
+	return books.get(bookId);
+}
+
+
+
+changes rest controller;
+--------------------
+	@GET
+	@Path("/{bookId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Book getBookById(@PathParam("bookId") int bookId) throws BookNotFoundException{
+		//return dao.getBookById(bookId);
+		throw new BookNotFoundException("book not found");
+	}
+	
+
+Exception handling:
+----------------
+@Provider : concept in jax rs
+Aim: handle ex gracefully ... html error page not useful sw layer
+
+1. we have to create a class that is annoted with
+	@Provider (aka listerns in jax rs)
+
+2. We need to imp an interface ie called ExceptionMapper
+	then override its method toResponse and tell what should be responee
+	in case of this exp!
+
+	What is response?
+	response = data + http status code
+
+
+finally create an Exception mapper:
+------------------------------------
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
+@Provider
+public class BookNotFoundExceptionMapper implements ExceptionMapper<BookNotFoundException>{
+
+	@Override
+	public Response toResponse(BookNotFoundException ex) {
+		return Response.status(404).entity(ex.getMessage()).type("text/plain").build();
+
+	}
+
+}
+
+
+@Provider
+public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
+
+	@Override
+	public Response toResponse(Throwable ex) {
+		ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), 500, "http://abc.com");
+		return Response.status(Status.INTERNAL_SERVER_ERROR)
+				.entity(errorMessage)
+				.build();
+	}
+
+}
+
+
+
+
+
+
+
+Maven dependencies:
+-------------------
+  <build>
+        <finalName>demorest</finalName>
+        <plugins>
+           			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.glassfish.jersey</groupId>
+                <artifactId>jersey-bom</artifactId>
+                <version>${jersey.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <!-- use the following artifactId if you don't need servlet 2.x compatibility -->
+            <!-- artifactId>jersey-container-servlet</artifactId -->
+        </dependency>
+        <!-- uncomment this to get JSON support
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-moxy</artifactId>
+        </dependency>
+        -->
+    </dependencies>
+    <properties>
+        <jersey.version>2.16</jersey.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+
+https://github.com/rest-assured/rest-assured/blob/master/examples/rest-assured-itest-java/src/test/java/io/restassured/itest/java/AcceptHeaderITest.java
+
+https://www.slideshare.net/gouthamrv/restful-services-2477903
+https://openweathermap.org/current
+

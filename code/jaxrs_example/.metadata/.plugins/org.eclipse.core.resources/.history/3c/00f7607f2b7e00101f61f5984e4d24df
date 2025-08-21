@@ -1,0 +1,9 @@
+package com.demo;
+@ApplicationPath("/api")   // replaces <url-pattern>/api/*</url-pattern>
+public class MyRestApplication extends ResourceConfig {
+
+    public MyRestApplication() {
+        // This replaces <param-value>com.demo</param-value>
+        packages("com.demo");
+    }
+}

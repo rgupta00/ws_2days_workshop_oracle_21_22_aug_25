@@ -1,0 +1,253 @@
+
+SOAP Web Services – Basic Introduction
+======================================
+
+What is a Web Service?
+A Web Service allows two applications (possibly on different machines)
+ to communicate over the internet.
+ 
+Example: Your Java application calls a weather service to get the temperature.
+
+Web services are language-independent (Java can talk to .NET, Python, etc.).
+
+Types of Web Services
+-----------------------------
+SOAP (Simple Object Access Protocol)
+	Uses XML to exchange messages.
+	Very strict standard, defines exact format for requests and responses.
+	Often used in enterprise applications where security and reliability matter.
+
+REST (Representational State Transfer)
+	Uses JSON (or XML) over HTTP.
+	Lightweight, easy to use, more popular for modern apps.
+
+SOAP – The Protocol
+	---------------------
+	SOAP is a protocol for exchanging structured information.
+	Communication happens via SOAP messages, which are XML documents.
+	SOAP works over HTTP, SMTP, TCP, etc.
+
+Basic structure of a SOAP message:
+-----------------------------------
+<soap:Envelope>
+   <soap:Header>...</soap:Header>
+   <soap:Body>
+      <m:operation xmlns:m="http://example.com">
+         <m:param1>10</m:param1>
+         <m:param2>20</m:param2>
+      </m:operation>
+   </soap:Body>
+</soap:Envelope>
+
+WSDL – Web Services Description Language
+--------------------------------------------
+
+WSDL is an XML file that describes a SOAP web service.
+It tells the client:
+What operations the service provides (e.g., sum, multiply)
+Input & output messages
+Where to send requests (service URL)
+
+Example URL: http://localhost:8080/hello-ws/CalculatorService?wsdl
+
+UDDI – Universal Description, Discovery, and Integration
+--------------------------------------------------------------
+	UDDI is a registry for web services, like a “yellow pages”.
+	Allows clients to find available services and learn how to use them.
+	Not commonly used now, but was important in early SOAP adoption.
+
+JAX-WS – Java API for XML Web Services
+----------------------------------------
+JAX-WS is a Java library to create SOAP web services.
+
+It handles all the XML/SOAP processing automatically.
+
+Key features:
+--------------
+	@WebService – Marks a class as a SOAP service
+	@WebMethod – Marks a method that can be called by clients
+	Endpoint.publish() – Publish the service on a URL
+
+With JAX-WS, you don’t manually parse XML or SOAP messages—Java does it for you.
+
+How It Works – High-Level Flow
+------------------------------
+
+Server Side:
+	Developer creates a Calculator class with @WebService and @WebMethod.
+	Service is published at a URL (Endpoint.publish()).
+
+Client Side:
+	Client downloads WSDL file.
+	Generates Java proxy classes using wsimport (or Maven plugin).
+	Calls methods (sum(), multiply()) via the proxy.
+	SOAP messages are sent automatically; client gets XML response, converted to Java objects.
+
+Key Points
+---------
+SOAP = Protocol for XML-based messaging
+WSDL = XML description of the service
+UDDI = Optional service registry
+JAX-WS = Java API to create and consume SOAP services
+
+SOAP is strict, highly structured, secure, and good for enterprise apps.
+
+
+Hello World SOAP Web Service (Java 17 / Maven)
+------------------------------------------------
+<dependencies>
+    <!-- JAX-WS API -->
+    <dependency>
+        <groupId>jakarta.xml.ws</groupId>
+        <artifactId>jakarta.xml.ws-api</artifactId>
+        <version>3.1.0</version>
+    </dependency>
+
+    <!-- JAX-WS RI Implementation -->
+    <dependency>
+        <groupId>com.sun.xml.ws</groupId>
+        <artifactId>rt</artifactId>
+        <version>3.1.2</version>
+    </dependency>
+</dependencies>
+
+Web Service Endpoint
+------------------------------
+
+package com.demo;
+
+import jakarta.jws.WebService;
+import jakarta.jws.WebMethod;
+
+@WebService
+public class Calculator {
+
+    @WebMethod
+    public int sum(int param1, int param2) {
+        return param1 + param2;
+    }
+
+    @WebMethod
+    public int multiply(int param1, int param2) {
+        return param1 * param2;
+    }
+}
+
+Publish Endpoint
+-------------------------------
+package com.demo;
+
+import jakarta.xml.ws.Endpoint;
+
+public class Server {
+    public static void main(String[] args) {
+        Endpoint.publish(
+            "http://localhost:8080/hello-ws/CalculatorService",
+            new Calculator()
+        );
+        System.out.println("Service published at: http://localhost:8080/hello-ws/CalculatorService?wsdl");
+    }
+}
+
+
+Run Server.java → Access WSDL at:
+http://localhost:8080/hello-ws/CalculatorService?wsdl
+
+Create WS Client
+-------------------
+Instead of the old wsimport in JDK, use the Maven plugin:
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jaxws-maven-plugin</artifactId>
+            <version>2.6</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>wsimport</goal>
+                    </goals>
+                    <configuration>
+                        <wsdlUrls>
+                            <wsdlUrl>http://localhost:8080/hello-ws/CalculatorService?wsdl</wsdlUrl>
+                        </wsdlUrls>
+                        <packageName>com.demo.client</packageName>
+                        <sourceDestDir>${project.build.directory}/generated-sources/wsimport</sourceDestDir>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+
+Then run:
+
+mvn clean compile
+
+
+This generates the client classes in target/generated-sources/wsimport.
+
+5️⃣ Use Generated Client
+package com.demo.client;
+
+public class ClientApp {
+    public static void main(String[] args) {
+        CalculatorService service = new CalculatorService();
+        Calculator proxy = service.getCalculatorPort();
+
+        int a = 22;
+        int b = 33;
+
+        System.out.println("Sum = " + proxy.sum(a, b));
+        System.out.println("Multiply = " + proxy.multiply(a, b));
+    }
+}
+
+
+Here’s a clear SOAP vs REST comparison in table format for easy reference:
+-------------------------------------------------------------------------
+Feature					SOAP								REST
+Full Form				Simple Object Access Protocol		Representational State Transfer
+
+Protocol / Style		Protocol							Architectural style (not a protocol)
+
+Message Format			XML only (SOAP Envelope)			JSON (commonly), XML, plain text, HTML, etc.
+Transport Protocols		HTTP, SMTP, TCP, JMS, etc.			HTTP only
+
+Standards				Strict standards: WS-Security,		No strict standards; follows HTTP conventions
+						WS-ReliableMessaging,
+						WS-AtomicTransaction	
+						
+Operations				Uses SOAPAction with 				Uses standard HTTP methods: 
+						specific operations in WSDL			GET, POST, PUT, DELETE
+						
+Security				Built-in WS-Security support		Relies on HTTPS, OAuth, JWT, etc.
+						 (encryption, digital signature)
+						 
+Performance				Slower due to XML parsing 			Faster, lightweight (JSON smaller than XML)
+						and verbose messages
+						
+Statefulness			Can be stateful or stateless		Usually stateless
+
+Error Handling			Built-in error handling				Relies on HTTP status codes (e.g., 404, 500)
+						 via SOAP Fault
+						 
+Service Description		WSDL								Often uses OpenAPI / Swagger for documentation
+						 (Web Service Description Language)
+						 
+Caching					Not easy to cache					Easy to cache (GET requests can be cached)
+
+Flexibility				Less flexible 						More flexible (can evolve easily, multiple formats)
+						(strict contracts via WSDL)
+						
+Use Case				Enterprise-level apps, banking, 	Web/mobile apps, public APIs, cloud services
+						telecom, payment gateways
+						
+Tool Support			JAX-WS, Axis, Apache CXF			JAX-RS, Spring REST, Express.js, Django REST
+
+Summary:
+--------
+SOAP is heavy, secure, standardized, suited for enterprise systems.
+REST is lightweight, flexible, and fast, suited for modern web and mobile apps.

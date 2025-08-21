@@ -24,10 +24,8 @@ import jakarta.xml.bind.annotation.XmlRegistry;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Multiply_QNAME = new QName("http://calapp.com/", "multiply");
-    private final static QName _MultiplyResponse_QNAME = new QName("http://calapp.com/", "multiplyResponse");
-    private final static QName _Sum_QNAME = new QName("http://calapp.com/", "sum");
-    private final static QName _SumResponse_QNAME = new QName("http://calapp.com/", "sumResponse");
+    private final static QName _Add_QNAME = new QName("http://calapp.com/", "add");
+    private final static QName _AddResponse_QNAME = new QName("http://calapp.com/", "addResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.demo.client
@@ -37,87 +35,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Multiply }
+     * Create an instance of {@link Add }
      * 
      */
-    public Multiply createMultiply() {
-        return new Multiply();
+    public Add createAdd() {
+        return new Add();
     }
 
     /**
-     * Create an instance of {@link MultiplyResponse }
+     * Create an instance of {@link AddResponse }
      * 
      */
-    public MultiplyResponse createMultiplyResponse() {
-        return new MultiplyResponse();
+    public AddResponse createAddResponse() {
+        return new AddResponse();
     }
 
     /**
-     * Create an instance of {@link Sum }
-     * 
-     */
-    public Sum createSum() {
-        return new Sum();
-    }
-
-    /**
-     * Create an instance of {@link SumResponse }
-     * 
-     */
-    public SumResponse createSumResponse() {
-        return new SumResponse();
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Multiply }{@code >}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Add }{@code >}
      * 
      * @param value
      *     Java instance representing xml element's value.
      * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link Multiply }{@code >}
+     *     the new instance of {@link JAXBElement }{@code <}{@link Add }{@code >}
      */
-    @XmlElementDecl(namespace = "http://calapp.com/", name = "multiply")
-    public JAXBElement<Multiply> createMultiply(Multiply value) {
-        return new JAXBElement<Multiply>(_Multiply_QNAME, Multiply.class, null, value);
+    @XmlElementDecl(namespace = "http://calapp.com/", name = "add")
+    public JAXBElement<Add> createAdd(Add value) {
+        return new JAXBElement<Add>(_Add_QNAME, Add.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link MultiplyResponse }{@code >}
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddResponse }{@code >}
      * 
      * @param value
      *     Java instance representing xml element's value.
      * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link MultiplyResponse }{@code >}
+     *     the new instance of {@link JAXBElement }{@code <}{@link AddResponse }{@code >}
      */
-    @XmlElementDecl(namespace = "http://calapp.com/", name = "multiplyResponse")
-    public JAXBElement<MultiplyResponse> createMultiplyResponse(MultiplyResponse value) {
-        return new JAXBElement<MultiplyResponse>(_MultiplyResponse_QNAME, MultiplyResponse.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Sum }{@code >}
-     * 
-     * @param value
-     *     Java instance representing xml element's value.
-     * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link Sum }{@code >}
-     */
-    @XmlElementDecl(namespace = "http://calapp.com/", name = "sum")
-    public JAXBElement<Sum> createSum(Sum value) {
-        return new JAXBElement<Sum>(_Sum_QNAME, Sum.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SumResponse }{@code >}
-     * 
-     * @param value
-     *     Java instance representing xml element's value.
-     * @return
-     *     the new instance of {@link JAXBElement }{@code <}{@link SumResponse }{@code >}
-     */
-    @XmlElementDecl(namespace = "http://calapp.com/", name = "sumResponse")
-    public JAXBElement<SumResponse> createSumResponse(SumResponse value) {
-        return new JAXBElement<SumResponse>(_SumResponse_QNAME, SumResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://calapp.com/", name = "addResponse")
+    public JAXBElement<AddResponse> createAddResponse(AddResponse value) {
+        return new JAXBElement<AddResponse>(_AddResponse_QNAME, AddResponse.class, null, value);
     }
 
 }

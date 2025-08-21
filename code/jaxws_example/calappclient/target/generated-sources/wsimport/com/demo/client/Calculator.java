@@ -33,28 +33,10 @@ public interface Calculator {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "multiply", targetNamespace = "http://calapp.com/", className = "com.demo.client.Multiply")
-    @ResponseWrapper(localName = "multiplyResponse", targetNamespace = "http://calapp.com/", className = "com.demo.client.MultiplyResponse")
-    @Action(input = "http://calapp.com/Calculator/multiplyRequest", output = "http://calapp.com/Calculator/multiplyResponse")
-    public int multiply(
-        @WebParam(name = "arg0", targetNamespace = "")
-        int arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        int arg1);
-
-    /**
-     * 
-     * @param arg1
-     * @param arg0
-     * @return
-     *     returns int
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "sum", targetNamespace = "http://calapp.com/", className = "com.demo.client.Sum")
-    @ResponseWrapper(localName = "sumResponse", targetNamespace = "http://calapp.com/", className = "com.demo.client.SumResponse")
-    @Action(input = "http://calapp.com/Calculator/sumRequest", output = "http://calapp.com/Calculator/sumResponse")
-    public int sum(
+    @RequestWrapper(localName = "add", targetNamespace = "http://calapp.com/", className = "com.demo.client.Add")
+    @ResponseWrapper(localName = "addResponse", targetNamespace = "http://calapp.com/", className = "com.demo.client.AddResponse")
+    @Action(input = "http://calapp.com/Calculator/addRequest", output = "http://calapp.com/Calculator/addResponse")
+    public int add(
         @WebParam(name = "arg0", targetNamespace = "")
         int arg0,
         @WebParam(name = "arg1", targetNamespace = "")

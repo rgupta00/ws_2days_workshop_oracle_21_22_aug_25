@@ -1,0 +1,10 @@
+package com.calapp;
+
+import jakarta.xml.ws.Endpoint;
+
+public class Server {
+	public static void main(String[] args) {
+//		Endpoint.publish("http://localhost:8080/hello-ws/CalculatorService", new Calculator());
+//		System.out.println("Service published at: http://localhost:8080/hello-ws/CalculatorService?wsdl");
+	}
+}

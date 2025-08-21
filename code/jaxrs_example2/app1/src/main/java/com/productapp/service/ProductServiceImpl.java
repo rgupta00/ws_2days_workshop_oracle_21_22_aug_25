@@ -5,6 +5,7 @@ import java.util.List;
 import com.productapp.dao.Product;
 import com.productapp.dao.ProductDao;
 import com.productapp.dao.ProductDaoImplUsingMap;
+import com.productapp.exceptions.ProductNotFoundException;
 
 public class ProductServiceImpl implements ProductService{
 
@@ -17,7 +18,11 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public Product getProductById(int productId) {
-		return productDao.getProductById(productId);
+		Product product= productDao.getProductById(productId);
+		if(product==null) {
+			throw new ProductNotFoundException("product with id "+productId +" is not found");
+		}
+		return product;
 	}
 
 	@Override

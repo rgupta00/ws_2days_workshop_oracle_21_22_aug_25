@@ -3,6 +3,8 @@ package com.productapp.dao;
 import java.math.BigDecimal;
 import java.util.*;
 
+import com.productapp.exceptions.ProductNotFoundException;
+
 public class ProductDaoImplUsingMap implements ProductDao{
 	
 	private static Map<Integer, Product> products=new HashMap<Integer, Product>();

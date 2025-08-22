@@ -1,5 +1,6 @@
 package com.productapp.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +18,8 @@ public class ProductDaoImplUsingMap implements ProductDao{
 	private static int counter;
 	
 	static {
-		products.put(1, new Product(1, "Laptop", 500000));
-		products.put(2, new Product(2, "Laptop cover", 400));
+		products.put(1, new Product(1, "Laptop", BigDecimal.valueOf(500000)));
+		products.put(2, new Product(2, "Laptop cover", BigDecimal.valueOf(400)));
 		counter=2;
 	}
 	

@@ -1,39 +1,28 @@
 package com.productapp.dao;
+
+import java.math.BigDecimal;
+
+import org.hibernate.validator.constraints.Range;
+
+import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 //DTO
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+
 public class Product  {
+	
 	private Integer id;
+	@NotEmpty(message = "name must not be empty")
 	private String name;
-	private double price;
 	
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public double getPrice() {
-		return price;
-	}
-	public void setPrice(double price) {
-		this.price = price;
-	}
-	public Product() {}
-	public Product(Integer id, String name, double price) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.price = price;
-	}
-	@Override
-	public String toString() {
-		return "Book [id=" + id + ", name=" + name + ", price=" + price + "]";
-	}	
-	
+	@Range(min = 10, max = 200000, message = "price must be in limit")
+	private BigDecimal price;
 	
 }

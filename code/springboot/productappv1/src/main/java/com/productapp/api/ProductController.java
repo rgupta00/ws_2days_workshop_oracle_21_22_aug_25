@@ -22,11 +22,17 @@ public class ProductController {
 	}
 	
 	//get all products
-	
 	@GetMapping(path="products")
 	public List<Product> getAll(){
 		return productService.getAll();
 	}
 	
+	//get by id
+	
+	//add
+	
+	//update
+	
+	///delete
 
 }
